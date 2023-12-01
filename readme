@@ -1,1 +1,9 @@
-testing readme
+Kolb Leerstijlen Test
+
+Dit is een java applicatie om de Kolb Leerstijlen Test te doen.
+Na beantwoording van de 80 vragen komt er een resultaat uit.
+Dat is dan je leerstijl.
+
+De bedoeling is om de Main en Questions classes te plaatsen in IDE en van daaruit kan je het programma uitvoeren.
+
+Caroline Pinxterhuis en Martijn Ritsema
