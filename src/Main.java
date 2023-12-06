@@ -21,13 +21,13 @@ class KolbLeerstijlenTest {
         for (int i = 0; i < question.length; i++) {
             System.out.println(question[i]);
             System.out.print("Answer (yes/no): ");
-            String answer; //scanner.nextLine().toLowerCase();
+            String answer; //= scanner.nextLine().toLowerCase();
 
 
             if (isTesting) {
                 answer = testInput;
             } else {
-                answer = scanner.nextLine();
+                answer = scanner.nextLine().toLowerCase();
             }
 
 
