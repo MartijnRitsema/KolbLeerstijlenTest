@@ -1,45 +1,57 @@
-import java.util.Scanner;
+import javax.swing.*;
 import java.util.Random;
 
 class KolbLeerstijlenTest {
 
+    private static final int QUESTION_COUNT = 80;
+    private static int currentQuestionIndex = 0;
+    private static String[] userAnswers;
+
     public static void main(String[] args) {
-        // input
-        Scanner scanner = new Scanner(System.in);
+        userAnswers = new String[QUESTION_COUNT];
 
-        final boolean isTesting = true; // for test purposes this is true, if you need real answers set this to false
-
-        Questions questions = new Questions(); // Create an instance of Questions
-        String[] question = questions.question; // Access the question array
-
-        // Array to store answers
-        String[] userAnswers = new String[question.length];
-
-        Random random = new Random();
-
-        // mutation
-        for (int i = 0; i < question.length; i++) {
-            System.out.println(question[i]);
-            System.out.print("Answer (yes/no): ");
-            String answer;
-
-            if (isTesting) {
-                answer = (random.nextBoolean()) ? "yes" : "no";
-            } else {
-                answer = scanner.nextLine().toLowerCase();
-            }
-
-            if (answer.equals("yes") || answer.equals("no")) {
-                userAnswers[i] = answer;
-            } else {
-                System.out.println("Invalid answer. Answer 'yes' or 'no'.");
-                i--; // Stays on the same question
-            }
+        boolean isTesting = true; // Toggle for test purposes
+        if (isTesting) {
+            generateTestAnswers();
+            processResults();
+        } else {
+            askQuestion();
         }
+    }
 
-        // output
-        System.out.println();
+    private static void askQuestion() {
+        if (currentQuestionIndex < QUESTION_COUNT) {
+            String[] options = {"Yes", "No", "Exit"};
+            int choice = JOptionPane.showOptionDialog(null, Questions.question[currentQuestionIndex],
+                    "Question", JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE, null, options, options[0]);
 
+            if (choice == JOptionPane.YES_OPTION) {
+                userAnswers[currentQuestionIndex] = "yes";
+            } else if (choice == JOptionPane.NO_OPTION) {
+                userAnswers[currentQuestionIndex] = "no";
+            } else if (choice == JOptionPane.CANCEL_OPTION || choice == JOptionPane.CLOSED_OPTION) {
+                System.exit(0); // Afsluiten van het programma
+            } else {
+                JOptionPane.showMessageDialog(null, "Please select Yes, No, or Exit.");
+                askQuestion();
+                return;
+            }
+
+            currentQuestionIndex++;
+            askQuestion();
+        } else {
+            processResults();
+        }
+    }
+
+    private static void generateTestAnswers() {
+        Random random = new Random();
+        for (int i = 0; i < QUESTION_COUNT; i++) {
+            userAnswers[i] = (random.nextBoolean()) ? "yes" : "no";
+        }
+    }
+
+    private static void processResults() {
         int[] activistQuestionNumbers = {2, 4, 6, 10, 17, 23, 24, 32, 34, 38, 40, 43, 45, 48, 58, 64, 71, 72, 74, 79};
         int[] theoristQuestionNumbers = {1, 3, 8, 12, 14, 18, 20, 22, 26, 30, 42, 47, 51, 57, 61, 63, 68, 75, 77, 78};
         int[] reflectorQuestionNumbers = {7, 13, 15, 16, 25, 28, 29, 31, 33, 36, 39, 41, 46, 52, 55, 60, 62, 66, 67, 76};
@@ -57,26 +69,30 @@ class KolbLeerstijlenTest {
         System.out.println("The pragmatist score = " + pragmatistScore);
         System.out.println();
 
-        // Determine preference for activist style based on scores
-        determineActivistPreference(activistScore);
-        determineTheoristPreference(theoristScore);
-        determineReflectorPreference(reflectorScore);
-        determinePragmatistPreference(pragmatistScore);
-        System.out.println();
-        System.out.println("--------------------------------------------------------");
-        System.out.println();
-        LearningStyleInfo.printLearningStyles();
+        StringBuilder resultBuilder = new StringBuilder();
+        resultBuilder.append("The activist score = ").append(activistScore).append("\n").append(determineActivistPreference(activistScore)).append("\n\n");
+        resultBuilder.append("The theorist score = ").append(theoristScore).append("\n").append(determineTheoristPreference(theoristScore)).append("\n\n");
+        resultBuilder.append("The reflector score = ").append(reflectorScore).append("\n").append(determineReflectorPreference(reflectorScore)).append("\n\n");
+        resultBuilder.append("The pragmatist score = ").append(pragmatistScore).append("\n").append(determinePragmatistPreference(pragmatistScore)).append("\n\n");
+
+        resultBuilder.append("--------------------------------------------------------\n\n");
+        resultBuilder.append("Learning Style Explanation:\n\n");
+
+        for (LearningStyle style : LearningStyle.values()) {
+            resultBuilder.append(style.name()).append("\n").append(style.getDescription()).append("\n\n");
+        }
+
+        JOptionPane.showMessageDialog(null, resultBuilder.toString(), "Test Results", JOptionPane.INFORMATION_MESSAGE);
     }
-    public class LearningStyleInfo {
-        public static void printLearningStyles() {
-            System.out.println("Learning Style Explanation:");
-            System.out.println();
-            for (LearningStyle style : LearningStyle.values()) {
-                System.out.println(style.name() + "\n" + style.getDescription() + "\n");
-            }
+
+
+    private static void printLearningStyles() {
+        for (LearningStyle style : LearningStyle.values()) {
+            System.out.println(style.name() + "\n" + style.getDescription() + "\n");
         }
     }
-    public static void determineActivistPreference(int score) {
+
+    private static String determineActivistPreference(int score) {
         String preferenceLevel;
         if (score >= 13 && score <= 20) {
             preferenceLevel = "Very strong preference";
@@ -90,8 +106,9 @@ class KolbLeerstijlenTest {
             preferenceLevel = "Very low preference";
         }
         System.out.println("Activist preference: " + preferenceLevel);
+        return preferenceLevel;
     }
-    public static void determineReflectorPreference(int score) {
+    private static String determineReflectorPreference(int score) {
         String preferenceLevel;
         if (score >= 18 && score <= 20) {
             preferenceLevel = "Very strong preference";
@@ -105,8 +122,9 @@ class KolbLeerstijlenTest {
             preferenceLevel = "Very low preference";
         }
         System.out.println("Reflector preference: " + preferenceLevel);
+        return preferenceLevel;
     }
-    public static void determineTheoristPreference(int score) {
+    public static String determineTheoristPreference(int score) {
         String preferenceLevel;
         if (score >= 16 && score <= 20) {
             preferenceLevel = "Very strong preference";
@@ -120,8 +138,9 @@ class KolbLeerstijlenTest {
             preferenceLevel = "Very low preference";
         }
         System.out.println("Theorist preference: " + preferenceLevel);
+        return preferenceLevel;
     }
-    public static void determinePragmatistPreference(int score) {
+    private static String determinePragmatistPreference(int score) {
         String preferenceLevel;
         if (score >= 17 && score <= 20) {
             preferenceLevel = "Very strong preference";
@@ -135,6 +154,7 @@ class KolbLeerstijlenTest {
             preferenceLevel = "Very low preference";
         }
         System.out.println("Pragmatist preference: " + preferenceLevel);
+        return preferenceLevel;
     }
     public static int countMatches(String[] answers, int[] questionNumbers) {
         int counter = 0;

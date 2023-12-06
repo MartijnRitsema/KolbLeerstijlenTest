@@ -1,5 +1,5 @@
 public class Questions {
-    String[] question = {
+    static String[] question = {
                 "Question 1. I have strong beliefs about what is right and wrong, good and bad.",
                 "Question 2. I often act without considering the possible consequences.",
                 "Question 3. I tend to solve problems using a step-by-step approach.",
