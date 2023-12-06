@@ -1,36 +1,33 @@
-//import java.io.File;
-//import java.io.FileNotFoundException;
 import java.util.Scanner;
+import java.util.Random;
 
 class KolbLeerstijlenTest {
 
-        public static void main(String[] args) {
-            // input
-            Scanner scanner = new Scanner(System.in);
+    public static void main(String[] args) {
+        // input
+        Scanner scanner = new Scanner(System.in);
 
-            final boolean isTesting = false; // for test purposes this is true, if you need real answers set this to false
-            final String testInput = "yes";
+        final boolean isTesting = true; // for test purposes this is true, if you need real answers set this to false
 
-            Questions questions = new Questions(); // Create an instance of Questions
-            String[] question = questions.question; // Access the question array
+        Questions questions = new Questions(); // Create an instance of Questions
+        String[] question = questions.question; // Access the question array
 
-            // Array to store answers
-            String[] userAnswers = new String[question.length];
+        // Array to store answers
+        String[] userAnswers = new String[question.length];
+
+        Random random = new Random();
 
         // mutation
         for (int i = 0; i < question.length; i++) {
             System.out.println(question[i]);
             System.out.print("Answer (yes/no): ");
-            String answer; //= scanner.nextLine().toLowerCase();
-
+            String answer;
 
             if (isTesting) {
-                answer = testInput;
+                answer = (random.nextBoolean()) ? "yes" : "no";
             } else {
                 answer = scanner.nextLine().toLowerCase();
             }
-
-
 
             if (answer.equals("yes") || answer.equals("no")) {
                 userAnswers[i] = answer;
@@ -41,18 +38,15 @@ class KolbLeerstijlenTest {
         }
 
         // output
-        System.out.println("Answers with 'yes':");
-        for (int i = 0; i < userAnswers.length; i++) {
-            if ("yes".equals(userAnswers[i])) {
-                System.out.println("Question " + (i + 1) + ": " + userAnswers[i]);  //Result with only questions w
-            }
-        }
+        System.out.println();
 
         int[] activistQuestionNumbers = {2, 4, 6, 10, 17, 23, 24, 32, 34, 38, 40, 43, 45, 48, 58, 64, 71, 72, 74, 79};
         int[] theoristQuestionNumbers = {1, 3, 8, 12, 14, 18, 20, 22, 26, 30, 42, 47, 51, 57, 61, 63, 68, 75, 77, 78};
         int[] reflectorQuestionNumbers = {7, 13, 15, 16, 25, 28, 29, 31, 33, 36, 39, 41, 46, 52, 55, 60, 62, 66, 67, 76};
         int[] pragmatistQuestionNumbers = {5, 9, 11, 19, 21, 27, 35, 37, 44, 49, 50, 53, 54, 56, 59, 65, 69, 70, 73, 80};
 
+        System.out.println();
+        System.out.println("--------------------------------------------------------");
         int activistScore = countMatches(userAnswers, activistQuestionNumbers);
         System.out.println("The activist score = " + activistScore);
         int theoristScore = countMatches(userAnswers, theoristQuestionNumbers);
@@ -61,16 +55,27 @@ class KolbLeerstijlenTest {
         System.out.println("The reflector score = " + reflectorScore);
         int pragmatistScore = countMatches(userAnswers, pragmatistQuestionNumbers);
         System.out.println("The pragmatist score = " + pragmatistScore);
+        System.out.println();
 
         // Determine preference for activist style based on scores
         determineActivistPreference(activistScore);
         determineTheoristPreference(theoristScore);
         determineReflectorPreference(reflectorScore);
         determinePragmatistPreference(pragmatistScore);
+        System.out.println();
+        System.out.println("--------------------------------------------------------");
+        System.out.println();
+        LearningStyleInfo.printLearningStyles();
     }
-
-
-
+    public class LearningStyleInfo {
+        public static void printLearningStyles() {
+            System.out.println("Learning Style Explanation:");
+            System.out.println();
+            for (LearningStyle style : LearningStyle.values()) {
+                System.out.println(style.name() + "\n" + style.getDescription() + "\n");
+            }
+        }
+    }
     public static void determineActivistPreference(int score) {
         String preferenceLevel;
         if (score >= 13 && score <= 20) {
@@ -86,7 +91,6 @@ class KolbLeerstijlenTest {
         }
         System.out.println("Activist preference: " + preferenceLevel);
     }
-
     public static void determineReflectorPreference(int score) {
         String preferenceLevel;
         if (score >= 18 && score <= 20) {
@@ -102,23 +106,21 @@ class KolbLeerstijlenTest {
         }
         System.out.println("Reflector preference: " + preferenceLevel);
     }
-
     public static void determineTheoristPreference(int score) {
         String preferenceLevel;
-        if (score >= 13 && score <= 20) {
+        if (score >= 16 && score <= 20) {
             preferenceLevel = "Very strong preference";
-        } else if (score >= 11 && score <= 12) {
+        } else if (score >= 14 && score <= 15) {
             preferenceLevel = "Strong preference";
-        } else if (score >= 7 && score <= 10) {
+        } else if (score >= 11 && score <= 13) {
             preferenceLevel = "Moderate preference";
-        } else if (score >= 4 && score <= 6) {
+        } else if (score >= 8 && score <= 10) {
             preferenceLevel = "Low preference";
         } else {
             preferenceLevel = "Very low preference";
         }
         System.out.println("Theorist preference: " + preferenceLevel);
     }
-
     public static void determinePragmatistPreference(int score) {
         String preferenceLevel;
         if (score >= 17 && score <= 20) {
@@ -134,7 +136,6 @@ class KolbLeerstijlenTest {
         }
         System.out.println("Pragmatist preference: " + preferenceLevel);
     }
-
     public static int countMatches(String[] answers, int[] questionNumbers) {
         int counter = 0;
         for (int i : questionNumbers) {
@@ -146,43 +147,8 @@ class KolbLeerstijlenTest {
         return counter;
     }
 
-    /*public static String[] readQuestionsFromFile(String filename) {
-        try {
-            Scanner fileScanner = new Scanner(new File(filename));
-
-            // Count the number of lines in the file
-            int questionCount = 0;
-            while (fileScanner.hasNextLine()) {
-                fileScanner.nextLine();
-                questionCount++;
-            }
-
-            // Reinitialize the scanner
-            fileScanner.close();
-            fileScanner = new Scanner(new File(filename));
-
-            System.out.println("Number of questions detected: " + questionCount);  // Added line
-
-            // Read the questions in an array
-            String[] questions = new String[questionCount];
-            for (int i = 0; i < questionCount && fileScanner.hasNextLine(); i++) {
-                questions[i] = fileScanner.nextLine();
-                // System.out.println("Question " + (i + 1) + ": " + questions[i]);  // Added line
-            }
-
-            fileScanner.close();  // Close the scanner
-
-            return questions;
-        } catch (FileNotFoundException e) {
-            System.out.println("The file could not be found.");
-            e.printStackTrace();
-            System.exit(1);
-        } catch (Exception e) {
-            System.out.println("An error occurred while opening the file");
-            e.printStackTrace();
-            System.exit(1);
-        }*/
-        //return null;
-
 }
+
+
+
 
