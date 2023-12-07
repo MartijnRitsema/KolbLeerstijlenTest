@@ -1,5 +1,7 @@
 import javax.swing.*;
 import java.util.Random;
+import javax.swing.JOptionPane;
+
 
 class KolbLeerstijlenTest {
 
@@ -22,15 +24,17 @@ class KolbLeerstijlenTest {
     private static void askQuestion() {
         if (currentQuestionIndex < QUESTION_COUNT) {
             String[] options = {"Yes", "No", "Exit"};
+            ImageIcon icon = new ImageIcon(KolbLeerstijlenTest.class.getResource("/resources/logo.jpeg"));
+
             int choice = JOptionPane.showOptionDialog(null, Questions.question[currentQuestionIndex],
-                    "Question", JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE, null, options, options[0]);
+                    "Question", JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE, icon, options, options[0]);
 
             if (choice == JOptionPane.YES_OPTION) {
                 userAnswers[currentQuestionIndex] = "yes";
             } else if (choice == JOptionPane.NO_OPTION) {
                 userAnswers[currentQuestionIndex] = "no";
             } else if (choice == JOptionPane.CANCEL_OPTION || choice == JOptionPane.CLOSED_OPTION) {
-                System.exit(0); // Afsluiten van het programma
+                System.exit(0);
             } else {
                 JOptionPane.showMessageDialog(null, "Please select Yes, No, or Exit.");
                 askQuestion();
@@ -52,6 +56,7 @@ class KolbLeerstijlenTest {
     }
 
     private static void processResults() {
+        ImageIcon logoIcon = new ImageIcon(KolbLeerstijlenTest.class.getResource("/resources/logo.jpeg"));
         int[] activistQuestionNumbers = {2, 4, 6, 10, 17, 23, 24, 32, 34, 38, 40, 43, 45, 48, 58, 64, 71, 72, 74, 79};
         int[] theoristQuestionNumbers = {1, 3, 8, 12, 14, 18, 20, 22, 26, 30, 42, 47, 51, 57, 61, 63, 68, 75, 77, 78};
         int[] reflectorQuestionNumbers = {7, 13, 15, 16, 25, 28, 29, 31, 33, 36, 39, 41, 46, 52, 55, 60, 62, 66, 67, 76};
@@ -59,6 +64,7 @@ class KolbLeerstijlenTest {
 
         System.out.println();
         System.out.println("--------------------------------------------------------");
+        System.out.println();
         int activistScore = countMatches(userAnswers, activistQuestionNumbers);
         System.out.println("The activist score = " + activistScore);
         int theoristScore = countMatches(userAnswers, theoristQuestionNumbers);
@@ -82,14 +88,9 @@ class KolbLeerstijlenTest {
             resultBuilder.append(style.name()).append("\n").append(style.getDescription()).append("\n\n");
         }
 
-        JOptionPane.showMessageDialog(null, resultBuilder.toString(), "Test Results", JOptionPane.INFORMATION_MESSAGE);
-    }
+        JOptionPane.showMessageDialog(null, resultBuilder.toString(), "Test Results", JOptionPane.INFORMATION_MESSAGE, logoIcon);
 
-
-    private static void printLearningStyles() {
-        for (LearningStyle style : LearningStyle.values()) {
-            System.out.println(style.name() + "\n" + style.getDescription() + "\n");
-        }
+        PDFGenerator.generatePDFWithOption(resultBuilder.toString());
     }
 
     private static String determineActivistPreference(int score) {
@@ -166,6 +167,7 @@ class KolbLeerstijlenTest {
         }
         return counter;
     }
+
 
 }
 
